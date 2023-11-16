@@ -57,8 +57,8 @@ exports.create =  (req, res) => {
 
   exports.findOne = (req, res) => {
 
-    // console.log("gdgdgd")
-    const id = '837e764e-d510-4271-a6b1-c1afa0bde136';
+    console.log(req);
+    const id = req.params.id;
   
     Product.findByPk(id)
       .then(data => {
@@ -86,9 +86,9 @@ exports.create =  (req, res) => {
     //     });
     //   });
 
-    const name = req.query.title;
+    const name = req.query.name;
       const page = parseInt(req.query.page) || 1;
-      const limit = parseInt(req.query.limit) || 10;
+      const limit = parseInt(req.query.limit) || 8;
     
       var condition = name ? { name: { [Op.like]: `%${name}%` } } : null;
     
@@ -100,13 +100,7 @@ exports.create =  (req, res) => {
         .then(data => {
           const totalPages = Math.ceil(data.count / limit);
     
-          res.send({
-            totalItems: data.count,
-            totalPages: totalPages,
-            currentPage: page,
-            itemsPerPage: limit,
-            data: data.rows,
-          });
+          res.send(data.rows);
         })
         .catch(err => {
           res.status(500).send({
@@ -119,8 +113,17 @@ exports.create =  (req, res) => {
 
 exports.update = (req, res) => {
   const id = req.params.id;
+// console.log()
 
-  Product.update(req.body, {
+const products = {
+  name: req.body.name,
+  code: req.body.code,
+  category: req.body.category,
+  image : req.file ? req.file.buffer.toString('base64') : null,
+  description: req.body.description,
+};
+
+  Product.update(products, {
     where: { id: id }
   })
     .then(num => {
