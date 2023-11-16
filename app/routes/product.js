@@ -13,9 +13,9 @@ module.exports = app => {
   
     router.get("/", productController.findAll);
   
-    // router.get("/edit:id", productController.findOne);
+    router.get("/edit", productController.findOne);
   
-    // router.put("/edit:id", productController.update);
+    router.put("/edit:id", productController.update);
     
     app.use("/api/product", router);
   };

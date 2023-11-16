@@ -7,7 +7,7 @@ const image = db.images;
 
 
 exports.create =  (req, res) => {
-console.log(req)
+// console.log(req)
     // Validate request
     if (!req.body.name || !req.body.code || !req.body.category) {
       res.status(400).send({
@@ -55,6 +55,22 @@ console.log(req)
   };
   
 
+  exports.findOne = (req, res) => {
+
+    // console.log("gdgdgd")
+    const id = '837e764e-d510-4271-a6b1-c1afa0bde136';
+  
+    Product.findByPk(id)
+      .then(data => {
+        console.log(data.image)
+        res.send(data);
+      })
+      .catch(err => {
+        res.status(500).send({
+          message: `Error retrieving Book with id = ${id}`
+        });
+      });
+  };
 
   exports.findAll = (req, res) => {
     // const name = req.query.name;
@@ -98,6 +114,32 @@ console.log(req)
           });
         });
   };
+
+
+
+exports.update = (req, res) => {
+  const id = req.params.id;
+
+  Product.update(req.body, {
+    where: { id: id }
+  })
+    .then(num => {
+      if (num == 1) {
+        res.send({
+          message: "Product was updated successfully."
+        });
+      } else {
+        res.send({
+          message: `Cannot update Product with id=${id}. Maybe Product was not found or req.body is empty!`
+        });
+      }
+    })
+    .catch(err => {
+      res.status(500).send({
+        message: "Error updating Product with id=" + id
+      });
+    });
+};
 
 
 // exports.findAllPagination = (req, res) => {
