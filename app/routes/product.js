@@ -1,9 +1,15 @@
+const multer = require('multer');
+
+// Set up storage for uploaded images
+const storage = multer.memoryStorage();
+const upload = multer({ storage: storage });
+
 module.exports = app => {
     const productController = require("../controllers/product.js");
   
     const router = require("express").Router();
   
-    // router.post("/add", productController.create);
+    router.post("/add", upload.single('image'), productController.create);
   
     router.get("/", productController.findAll);
   

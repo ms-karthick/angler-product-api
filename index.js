@@ -6,11 +6,12 @@ const config = require("./config/config.js");
 const app = express();
 
 const corsOptions = {
-  origin: "http://localhost:8081"
+  origin: "http://localhost:3000"
 };
 
-app.use(cors(corsOptions));
+// app.use(cors(corsOptions));
 
+app.use(cors()); 
 // parse requests of content-type - application/json
 app.use(bodyParser.json());
 
