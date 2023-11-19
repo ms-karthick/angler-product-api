@@ -9,7 +9,7 @@ const image = db.images;
 exports.create =  (req, res) => {
 // console.log(req)
     // Validate request
-    if (!req.body.name || !req.body.code || !req.body.category) {
+    if (!req.body.name || !req.body.code || !req.body.selectedCategories) {
       res.status(400).send({
         message: "All field is required!"
       });
@@ -37,7 +37,8 @@ exports.create =  (req, res) => {
     const product = {
       name: req.body.name,
       code: req.body.code,
-      category: req.body.category,
+      category: req.body.selectedCategories || [],
+      // category: req.body.category,
       image : req.file ? req.file.buffer.toString('base64') : null,
       description: req.body.description,
     };
@@ -57,12 +58,12 @@ exports.create =  (req, res) => {
 
   exports.findOne = (req, res) => {
 
-    console.log(req);
+    // console.log(req);
     const id = req.params.id;
   
     Product.findByPk(id)
       .then(data => {
-        console.log(data.image)
+        // console.log(data.image)
         res.send(data);
       })
       .catch(err => {
@@ -76,29 +77,17 @@ exports.create =  (req, res) => {
     // const name = req.query.name;
     // var condition = name ? { name: { [Op.like]: `%${name}%` } } : null;
   
-    // Product.findAll({ where: condition })
-    //   .then(data => {
-    //     res.send(data);
-    //   })
-    //   .catch(err => {
-    //     res.send(500).send({
-    //       message: err.message || "Some error accurred while retrieving books."
-    //     });
-    //   });
-
-    const name = req.query.name;
       const page = parseInt(req.query.page) || 1;
-      const limit = parseInt(req.query.limit) || 8;
-    
-      var condition = name ? { name: { [Op.like]: `%${name}%` } } : null;
-    
+      const pageSize = 8;
+      const start = (page -1) * pageSize;
+      // const end = start + pageSize;
+     
       Product.findAndCountAll({
-        where: condition,
-        limit: limit,
-        offset: (page - 1) * limit,
+        limit: pageSize,
+        offset: (page - 1) * pageSize,
       })
         .then(data => {
-          const totalPages = Math.ceil(data.count / limit);
+          // const totalPages = Math.ceil(data.count / pageSize);
     
           res.send(data.rows);
         })
@@ -113,7 +102,7 @@ exports.create =  (req, res) => {
 
 exports.update = (req, res) => {
   const id = req.params.id;
-// console.log()
+// console.log(id)
 
 const products = {
   name: req.body.name,
@@ -122,13 +111,14 @@ const products = {
   image : req.file ? req.file.buffer.toString('base64') : null,
   description: req.body.description,
 };
-
+// console.log('data ' +products)
   Product.update(products, {
     where: { id: id }
   })
     .then(num => {
       if (num == 1) {
         res.send({
+          status:true,
           message: "Product was updated successfully."
         });
       } else {
@@ -144,33 +134,3 @@ const products = {
     });
 };
 
-
-// exports.findAllPagination = (req, res) => {
-//   const name = req.query.title;
-//   const page = parseInt(req.query.page) || 1;
-//   const limit = parseInt(req.query.limit) || 10;
-
-//   var condition = name ? { name: { [Op.like]: `%${name}%` } } : null;
-
-//   Product.findAndCountAll({
-//     where: condition,
-//     limit: limit,
-//     offset: (page - 1) * limit,
-//   })
-//     .then(data => {
-//       const totalPages = Math.ceil(data.count / limit);
-
-//       res.send({
-//         totalItems: data.count,
-//         totalPages: totalPages,
-//         currentPage: page,
-//         itemsPerPage: limit,
-//         data: data.rows,
-//       });
-//     })
-//     .catch(err => {
-//       res.status(500).send({
-//         message: err.message || "Some error occurred while retrieving products."
-//       });
-//     });
-// };

@@ -15,7 +15,7 @@ module.exports = app => {
   
     router.get("/edit/:id", productController.findOne);
   
-    router.put("/edit/:id", productController.update);
+    router.put("/update/:id", upload.single('image'), productController.update);
     
     app.use("/api/product", router);
   };
